@@ -1,10 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { load } from './index.server';
-import { LoadResult } from '@analogjs/router';
+import { LoadResult, injectLoad } from '@analogjs/router';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   standalone: true,
+  imports: [AsyncPipe],
   template: `
     <div>
       <a href="https://analogjs.org/" target="_blank">
@@ -16,7 +18,7 @@ import { LoadResult } from '@analogjs/router';
 
     <h3>The fullstack meta-framework for Angular2! </h3>
 
-    <p>Loaded: {{ data.loaded }}</p>
+    <p>Loaded: {{ (data | async)?.loaded }}</p>
 
     <div class="card">
       <button type="button" (click)="increment()">Count {{ count }}</button>
@@ -45,14 +47,14 @@ import { LoadResult } from '@analogjs/router';
   ],
 })
 export default class HomeComponent {
-
+  data = injectLoad<typeof load>();
   count = 0;
 
-  @Input() load(data: LoadResult<typeof load>) {
-    this.data = data;
-  }
+  // @Input() load(data: LoadResult<typeof load>) {
+  //   this.data = data;
+  // }
 
-  data!: LoadResult<typeof load>;
+  // data!: LoadResult<typeof load>;
 
   increment() {
     this.count++;
